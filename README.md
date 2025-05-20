@@ -63,13 +63,13 @@ export TEST_BUCKET_NAME=your-bucket-name
 
 ## 🐳 Docker Setup
 
-# 1. Build the Docker image:
+### 1. Build the Docker image:
 
 ```bash
 docker build -t gcs-tests .
 ```
 
-# 2. Run the container:
+### 2. Run the container:
 
 ```bash
 docker run -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
@@ -78,8 +78,8 @@ docker run -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
            gcs-tests
 ```
 
-### ✅ Expected Test Results
-# When executed correctly, the output will be something like:
+# ✅ Expected Test Results
+### When executed correctly, the output will be something like:
 
 ```yaml
 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
@@ -94,26 +94,26 @@ Each test class (Upload, Download, ListFiles, SignedUrl) will:
 
   -Fail gracefully if GCP credentials are missing or invalid.
 
-### 🔍 Explanation of the Testing Process
-# 1. UploadTest
+# 🔍 Explanation of the Testing Process
+### 1. UploadTest
 
 -Uploads a test file to the GCS bucket.
 
 -Asserts that the blob now exists in the bucket.
 
-# 2. DownloadTest
+### 2. DownloadTest
 
 Downloads an existing object from the bucket.
 
 Verifies the file is correctly saved locally and optionally checks contents.
 
-# 3. ListFilesTest
+### 3. ListFilesTest
 
 Lists all blobs in the specified GCS bucket.
 
 Asserts the list is non-empty and contains expected filenames.
 
-# 4. SignedUrlTest
+### 4. SignedUrlTest
 
 Generates a signed URL for an object in the bucket.
 
