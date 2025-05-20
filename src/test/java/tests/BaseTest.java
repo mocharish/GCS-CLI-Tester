@@ -1,16 +1,25 @@
 package tests;
 
-import org.testng.annotations.BeforeClass;
-
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
+
+import org.testng.annotations.BeforeClass;
 
 public class BaseTest {
 
+    // Path to the gcloud CLI executable depending on OS
     protected final String GCLOUD_PATH = getGcloudCommand();
+
+     // GCS bucket to use for testing
     protected final String TEST_BUCKET = "gs://test-bucket-mend";
 
+     // Base names for test files
     protected final String TEST_FILE_NAME = "testfile.txt";
     protected final String DOWNLOADED_FILE = "downloaded.txt";
 
@@ -18,19 +27,25 @@ public class BaseTest {
     protected final String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8);
     protected final String uniqueTestFileName = TEST_FILE_NAME.replace(".txt", "-" + uniqueSuffix + ".txt");
     protected final String uniqueDownloadedFile = "downloaded-" + uniqueSuffix + ".txt";
+
+      // Full GCS path to the test file
     protected final String uniqueBucketFilePath = TEST_BUCKET + "/" + uniqueTestFileName;
 
-    // Customizable test file content
+    // test file content
     protected final String TEST_FILE_CONTENT = "Sample test content for upload/download testing.";
-
+    
+    // Setup method that runs once before all tests
     @BeforeClass(alwaysRun = true)
     public void setup() throws IOException {
         printGcloudVersion();
         createLocalTestFileIfMissing(uniqueTestFileName, TEST_FILE_CONTENT);
     }
 
+     /**
+     * Uploads a local file to the specified GCS bucket path using the gcloud CLI.
+     */
     protected void uploadFileToBucket(String localFile, String bucketPath) throws IOException, InterruptedException {
-        System.out.println("⬆ Uploading file " + localFile + " to " + bucketPath);
+        System.out.println(" Uploading file " + localFile + " to " + bucketPath);
         String output = runCommand(GCLOUD_PATH, "storage", "cp", localFile, bucketPath);
         System.out.println("Upload output:\n" + output);
 
@@ -38,7 +53,10 @@ public class BaseTest {
             throw new RuntimeException("Upload command output does not confirm file upload.");
         }
     }
-
+    
+    /**
+    * Determines the correct gcloud command to run based on the operating system.
+    */
     protected static String getGcloudCommand() {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
@@ -48,6 +66,9 @@ public class BaseTest {
         }
     }
 
+    /**
+    * Prints the version of the installed gcloud CLI tool.
+    */
     protected void printGcloudVersion() {
         System.out.println(" Checking gcloud version...");
         try {
@@ -57,7 +78,10 @@ public class BaseTest {
             System.err.println("Failed to get gcloud version: " + e.getMessage());
         }
     }
-
+    
+    /**
+    * Runs a system command and returns the output. Retries up to 3 times on failure.
+    */
     protected String runCommand(String... command) throws IOException, InterruptedException {
         int retries = 3;
         while (retries > 0) {
@@ -88,6 +112,9 @@ public class BaseTest {
         throw new RuntimeException("Command failed after retries.");
     }
 
+    /**
+    * Creates a local text file with specified content if it doesn't already exist.
+    */
     protected void createLocalTestFileIfMissing(String filename, String content) throws IOException {
         Path path = Paths.get(filename);
         if (!Files.exists(path)) {
@@ -95,7 +122,11 @@ public class BaseTest {
             System.out.println(" Created local test file: " + filename);
         }
     }
+    
 
+    /**
+    * Deletes a file from local disk if it exists.
+    */
     protected void deleteFileIfExists(String filename) {
         File file = new File(filename);
         if (file.exists()) {
