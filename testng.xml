@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="GCloudStorageCLITests">
+    <test name="UploadCommandTest">
+        <classes>
+            <class name="tests.UploadTest"/>
+            <class name="tests.DownloadTest"/>
+            <class name="tests.ListTest"/>
+            <class name="tests.SignUrlTest"/>
+        </classes>
+    </test>
+</suite>
