@@ -52,13 +52,25 @@ You can run the tests either **locally** or inside a **Docker container**.
    - Maven installed
    - GCP service account key (`credentials.json`) with permissions for the target bucket
 
-2. Set the required environment variables (or export them):
+
+### Environment Setup
+Make sure you’re authenticated:
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+```
 
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
+export GOOGLE_APPLICATION_CREDENTIALS=./secrets/credentials.json
 export TEST_BUCKET_NAME=your-bucket-name
 ```
 
+## Running the Tests
+
+To run all tests, use:
+```bash
+mvn test
+```
 
 
 ## 🐳 Docker Setup
@@ -75,8 +87,10 @@ docker build -t gcs-tests .
 docker run -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
            -e TEST_BUCKET_NAME=your-bucket-name \
            -v $PWD/credentials.json:/app/credentials.json \
-           gcs-tests
+            gcs-cli-test
 ```
+
+⚠️ Replace your-bucket-name with your actual GCS bucket and ensure your credentials file is named credentials.json and located in your current directory.
 
 # ✅ Expected Test Results
 ### When executed correctly, the output will be something like:
